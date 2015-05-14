@@ -6,13 +6,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.speech.tts.TextToSpeech;
-import java.util.Locale;
 import android.content.Intent;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Random;
 
 
 public class Twister extends ActionBarActivity {
 
     private TextToSpeech text_to_speech;
+    private Timer timer;
 
     // This code can be any value you want, its just a checksum.
     private static final int MY_DATA_CHECK_CODE = 1234;
@@ -51,12 +54,25 @@ public class Twister extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    class giveInstructions extends TimerTask{
+        private String[] limbs = {"Left Hand", "Left Foot", "Right Hand", "Right Foot"};
+        private String[] colors = {"Red", "Blue", "Green", "Yellow"};
+        @Override
+        public void run() {
+            String limb = limbs[new Random().nextInt(limbs.length)];
+            String color = colors[new Random().nextInt(colors.length)];
+            speak(limb + color);
+        }
+    }
+
     public void startButton(View view) {
-        speak("Start Button");
+        timer = new Timer("Speaking");
+        timer.scheduleAtFixedRate(new giveInstructions(), 0, 10000);
     }
 
     public void stopButton(View view) {
-        speak("Stop Button");
+//        speak("Stop Button");
+        timer.cancel();
     }
 
     public void speak(final String text){
@@ -87,7 +103,7 @@ public class Twister extends ActionBarActivity {
         {
             if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS)
             {
-                speak("Initialized");
+//                speak("Initialized");
             }
             else
             {
